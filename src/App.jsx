@@ -2,9 +2,10 @@ import * as React from 'react';
 import './App.css'
 import TodoList from './TodoList'
 import AddTodoForm from './AddTodoForm'
+import { useState } from 'react';
 
 function App() {
-  const [newTodo, setNewTodo] = React.useState(''); 
+  const [newTodo, setNewTodo] = useState(''); 
 
   return (
       <div>

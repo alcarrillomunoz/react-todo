@@ -1,8 +1,6 @@
 function TodoListItem(props) {
     return (
-        <div>
-            <li>{props.todo}</li>
-        </div>
+        <li>{props.todo}</li>
     )
 }
 
