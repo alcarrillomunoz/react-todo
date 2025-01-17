@@ -35,9 +35,7 @@ function App() {
         return newTodo;
       });
       setTodoList(todosFromAPI);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 2000);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
