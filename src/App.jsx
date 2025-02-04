@@ -92,9 +92,28 @@ function App() {
     // console.log(newTodoList);    //----> to log all todoList items
   }
 
-  function removeTodo(id) {
+  async function removeTodo(id) {
     const newTodoList = todoList.filter((item) => item.id !== id);
     setTodoList([...newTodoList]);
+
+    try {
+      const options = {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+        },
+      };
+
+      const response = await fetch(url + "/" + id, options);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      // const data = await response.json();
+      // console.log("deleted", data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -102,7 +121,15 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Homepage addTodo={addTodo} isLoading={isLoading} todoList={todoList} removeTodo={removeTodo}/>} />
+          element={
+            <Homepage
+              addTodo={addTodo}
+              isLoading={isLoading}
+              todoList={todoList}
+              removeTodo={removeTodo}
+            />
+          }
+        />
         <Route
           path="/new"
           element={
@@ -116,18 +143,18 @@ function App() {
   );
 }
 
-function Homepage( {addTodo, isLoading, todoList, removeTodo} ) {
-  return(
+function Homepage({ addTodo, isLoading, todoList, removeTodo }) {
+  return (
     <>
-              <h1>Todo List</h1>
-              <AddTodoForm onAddTodo={addTodo} />
-              {isLoading ? (
-                <p>Loading...</p>
-              ) : (
-                <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
-              )}
-            </>
-  )
+      <h1>Todo List</h1>
+      <AddTodoForm onAddTodo={addTodo} />
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+      )}
+    </>
+  );
 }
 
 export default App;
