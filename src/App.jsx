@@ -4,14 +4,20 @@ import AddTodoForm from "./components/AddTodoForm";
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+let ListOrder = true;
+
 function App() {
   const [todoList, setTodoList] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [sort, setSort] = useState("asc");
+
   const url = `https://api.airtable.com/v0/${
     import.meta.env.VITE_AIRTABLE_BASE_ID
   }/${import.meta.env.VITE_TABLE_NAME}`;
+
+  const sorting = "?sort[0][field]=title&sort[0][direction]=" + sort;
 
   async function fetchData() {
     const options = {
@@ -22,7 +28,7 @@ function App() {
     };
 
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url + sorting, options);
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -41,8 +47,20 @@ function App() {
     }
   }
 
-  useEffect(() => {
+  function handleOrder() {
+    if (ListOrder === true) {
+      setSort("asc");
+      ListOrder = false;
+    } else {
+      setSort("desc");
+      ListOrder = true;
+    }
     fetchData();
+  }
+
+  useEffect(() => {
+    handleOrder();
+    //fetchData();
   }, []);
 
   useEffect(() => {
@@ -82,11 +100,15 @@ function App() {
       };
 
       const newTodoList = [...todoList, newTodoFromAPI];
-      setTodoList(newTodoList);
+
+      const sortedTodoList = newTodoList.sort((a, b) =>
+        a.title.localeCompare(b.title)
+      );
+
+      setTodoList(sortedTodoList);
     } catch (error) {
       console.log(error);
     }
-
     // new array with previous and new todo items
     // const newTodoList = [...todoList, newTodo];
     // console.log(newTodoList);    //----> to log all todoList items
@@ -127,6 +149,7 @@ function App() {
               isLoading={isLoading}
               todoList={todoList}
               removeTodo={removeTodo}
+              handleOrder={handleOrder}
             />
           }
         />
@@ -143,7 +166,7 @@ function App() {
   );
 }
 
-function Homepage({ addTodo, isLoading, todoList, removeTodo }) {
+function Homepage({ addTodo, isLoading, todoList, removeTodo, handleOrder }) {
   return (
     <>
       <h1>Todo List</h1>
@@ -151,7 +174,38 @@ function Homepage({ addTodo, isLoading, todoList, removeTodo }) {
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+        <>
+          <button onClick={handleOrder} className="orderButton">
+            {" "}
+            <svg
+              fill="#000000"
+              height="24px"
+              width="24px"
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
+              viewBox="0 0 490 490"
+              xmlSpace="preserve"
+            >
+              <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                {" "}
+                <g>
+                  {" "}
+                  <polygon points="85.877,154.014 85.877,428.309 131.706,428.309 131.706,154.014 180.497,221.213 217.584,194.27 108.792,44.46 0,194.27 37.087,221.213 "></polygon>{" "}
+                  <polygon points="404.13,335.988 404.13,61.691 358.301,61.691 358.301,335.99 309.503,268.787 272.416,295.73 381.216,445.54 490,295.715 452.913,268.802 "></polygon>{" "}
+                </g>{" "}
+              </g>
+            </svg>{" "}
+          </button>
+          <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+        </>
       )}
     </>
   );
