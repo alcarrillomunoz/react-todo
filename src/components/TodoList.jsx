@@ -1,9 +1,10 @@
 import TodoListItem from "./TodoListItem";
+import style from "./TodoList.module.css";
 import PropTypes from "prop-types";
 
 function TodoList({ todoList, onRemoveTodo }) {
   return (
-    <ul>
+    <ul className={style.TodoList}>
       {todoList.map((item) => (
         <TodoListItem
           key={item.id}

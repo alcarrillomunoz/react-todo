@@ -1,0 +1,19 @@
+.BackButton {
+  margin-top: 1.5em;
+  float: left;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 1.5em;
+  border-radius: 25px;
+  font-weight: 700;
+  padding: 0.25em 0.5em;
+}
+
+.BackButton:hover {
+  background-color: white;
+}
+
+.BackButton svg {
+  padding-right: 0.75em;
+}
